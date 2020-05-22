@@ -15,7 +15,15 @@ public class EmployeeService {
     return employeeRepository.findAll();
   }
 
+  public Employee getEmployee(int id) {
+    return employeeRepository.findById(id).get();
+  }
+
   public void saveOrUpdate(Employee employee) {
     employeeRepository.save(employee);
+  }
+
+  public void delete(int id) {
+    employeeRepository.deleteById(id);
   }
 }
