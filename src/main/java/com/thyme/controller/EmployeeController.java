@@ -1,35 +1,47 @@
 package com.thyme.controller;
 
 import com.thyme.entity.Employee;
-import java.util.ArrayList;
+import com.thyme.service.EmployeeService;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/employees")
 public class EmployeeController {
 
-  private List<Employee> employees;
-
-  @PostConstruct
-  private void localData() {
-
-    Employee emp1 = new Employee(1, "Dazz", "Kaminski", "dazz@gmail.com");
-
-    employees = new ArrayList<>();
-
-    employees.add(emp1);
-  }
+  @Autowired private EmployeeService employeeService;
 
   @GetMapping("/list")
   public String listEmployees(Model model) {
 
+    List<Employee> employees = employeeService.getEmployees();
+
     model.addAttribute("employees", employees);
 
-    return "list-employees";
+    return "employees/list-employees";
+  }
+
+  @GetMapping("/showFormForAdd")
+  public String showFormForAdd(Model model) {
+
+    Employee employee = new Employee();
+
+    model.addAttribute("employee", employee);
+
+    return "employees/employee-form";
+  }
+
+  @PostMapping("/save")
+  public String saveEmployee(@ModelAttribute("employee") Employee employee) {
+
+    employeeService.saveOrUpdate(employee);
+
+    return "redirect:/employees/list";
   }
 }
